@@ -8,6 +8,8 @@ Designed to integrate into the conventional cartridge slot of the SVI-328, this 
 
 ![SVI-328 PicoROM cartridge](images/cartridge.jpeg "SVI-328 PicoROM cartridge")
 
+![SVI-328 PicoROM splash screen](images/picoromboot.png "SVI-328 PicoROM splash screen")
+
 ## Repository contents
 
 This repository contains:
@@ -33,18 +35,36 @@ Press Pico's BOOTSEL button (the only button on the board, see the board picture
 
 Then, find the UF2 flash binary file from [release/svi-328-picorom.uf2](release/svi-328-picorom.uf2).
 
-Next, flash the Raspberry Pico 2 W by dragging the UF2 file on to the Pico USB drive and wait until Pico disconnects (displays `Disk Not Ejected Properly` in macOS) and the green LED light turns on to signal that the firmware booted correctly.
-
-Finally, remove the USB cable and connect the cartridge to SVI-328 and boot it up. (Warning: **DO NOT** connect anything to the cartridge USB port when it is attached to the SVI-328. This will destroy the cartridge.)
+Next, flash the Raspberry Pico 2 W by dragging the UF2 file on to the Pico USB drive and wait until Pico disconnects (displays `Disk Not Ejected Properly` in macOS) and the green LED light turns on to signal that the firmware booted correctly. Finally, remove the USB cable.
 
 ### Booting up and sending a ROM
 
+Connect the cartridge to SVI-328 and boot it up. (Warning: **DO NOT** connect anything to the cartridge USB port when it is attached to the SVI-328. This will destroy the cartridge.)
 
+![SVI-328 PicoROM Wi-Fi credentials](images/picoromwifi.png "SVI-328 PicoROM  Wi-Fi credential")
 
+If you didn't flash the Wi-Fi credentials (see section [Flashing Wi-Fi credentials to the cartridge](#flashing-wi-fi-credentials-to-the-cartridge)), the SVI-328 should ask for your Wi-Fi SSID and password. Please note, that once you store successfully working credentials, there is no way (currently) to remove the stored credentials using SVI-328. You need to use the command line utility described in section [Flashing Wi-Fi credentials to the cartridge](#flashing-wi-fi-credentials-to-the-cartridge).
+
+The SVI-328 will remain waiting for a client.
+
+![SVI-328 PicoROM waiting for client](images/picostoring.jpeg "SVI-328 PicoROM waiting for client")
+
+To send a ROM from Windows or macOS, use the `send_rom.js` to send it. It should display the following information:
+```
+node js/send_rom.js Boulder\ Dash-MSX-to-SVI.rom 
+Waiting for SVI-328 at address 0.0.0.0...
+Connecting to SVI-328 at 192.168.1.100...
+Connected. Sending ROM upload command...
+ROM sent. Listening for logs:
+```
+
+After this, the SVI-328 should boot to the sent ROM.
+
+**NOTE**: Only 32 kB ROM images are supported at the moment.
 
 ## System prerequisites
 
-The replication and deployment of this project require the following environment configurations:
+The replication and deployment of this project requires the following environment configurations:
  - Raspberry Pi Pico SDK installation and associated toolchains.
  - Node.js runtime environment for executing the provided WiFi-based ROM transmission scripts.
  - KiCad for PCB customization, schematic evaluation, and Gerber file generation.
@@ -95,6 +115,12 @@ Using the example `wifi-credentials.config.example`, create a `wifi-credentials.
 
 ```
 scripts/write_credentials.sh
+```
+
+To remove stored credentials, use this command:
+
+```
+scripts/write_credentials.sh --clear
 ```
 
 ## Operational framework
